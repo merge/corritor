@@ -14,13 +14,14 @@ that simply whitelists traffic to and from Guard relays only.
 
 		ipset create torset hash:ip,port
 
-* using `src/or/auth_dirs.inc`:
+* bootstrap: using `src/or/auth_dirs.inc`:
   * `torset_add_auths.sh` runs `ipset add torset` on them.
   * `download_consensus.sh` downloads the consensus file in a stupid way.
+* using scripts/maint/fallback.whitelist:
+  * `torset_add_fbdirs.sh` uses the fallback dirs and adds them to torset
 * using the consensus:
   * `torset_add_guards.sh` uses the consensus file and runs `ipset add torset`
 on each Guard relay
-* Do we need the fallback dirs from scripts/maint/fallback.whitelist ?
 
 ## TODO
 ### iptables
