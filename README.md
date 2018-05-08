@@ -6,19 +6,10 @@ The [corridor](https://github.com/rustybird/corridor) Projekt adresses
 important issues that "transparently torifying gateways" suffer from. It
 still runs the Tor software itself though.
 
-This should become an [OpenWRT](https://openwrt.org/) network configuration that simply whitelists
-traffic to and from Guard relays only.
+This should become an [OpenWRT](https://openwrt.org/) network configuration
+that simply whitelists traffic to and from Guard relays only.
 
-We have to whitelist about 2000 ip:port combinations and drop everything else.
-
-## TODO
-### consensus source
-We need to hourly fetch a consesus file. Do we have to use a Network Authority?
-See https://consensus-health.torproject.org/ We need
-* Guard relays
-* the dir auths from src/or/auth_dirs.inc
-* the fallback dirs from scripts/maint/fallback.whitelist ?
-
+## DONE
 ### ipset
 
 		ipset create torset hash:ip,port
@@ -27,9 +18,11 @@ See https://consensus-health.torproject.org/ We need
   * `torset_add_auths.sh` runs `ipset add torset` on them.
   * `download_consensus.sh` downloads the consensus file in a stupid way.
 * using the consensus:
-  * `torset_add_guards.sh` uses a consensus file, parses for servers with Guard flag, refactors
-for `ipset` and runs `ipset add torset` on each server in the list
+  * `torset_add_guards.sh` uses the consensus file and runs `ipset add torset`
+on each Guard relay
+* Do we need the fallback dirs from scripts/maint/fallback.whitelist ?
 
+## TODO
 ### iptables
 To enable it:
 
