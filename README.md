@@ -21,20 +21,14 @@ See https://consensus-health.torproject.org/ We need
 
 ### ipset
 
-		ipset create guardset
+		ipset create torset hash:ip,port
 
-This uses tor's `src/or/auth_dirs.inc`, parses the ipv4 addresses and runs
-`ipset add guardset` on them:
-
-		cat auth_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\:[0-9]\{1,5\}' | tr ':' ',' | while read entry; do ipset add guardset $entry; done
-
-TODO add a script that downloads `<ip>/tor/status-vote/current/consensus` from
-any of them.
-
-This uses a consensus file, parses for servers with Guard flag, refactors
-for `ipset` and runs `ipset add` on each server in the list:
-
-		cat consensus | grep -B 2 Guard | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\ [0-9]\{1,5\}' | tr ' ' ',' | while read entry; do ipset add guardset $entry; done
+* using `src/or/auth_dirs.inc`:
+  * `torset_add_auths.sh` runs `ipset add torset` on them.
+  * `download_consensus.sh` downloads the consensus file in a stupid way.
+* using the consensus:
+  * `torset_add_guards.sh` uses a consensus file, parses for servers with Guard flag, refactors
+for `ipset` and runs `ipset add torset` on each server in the list
 
 ### iptables
 To enable it:
