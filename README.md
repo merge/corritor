@@ -24,7 +24,10 @@ on each Guard relay
 
 ## TODO
 ### iptables
-To enable it:
+The most simple config...
+* Tor control port
+* loopback?
+* PREROUTE instead of INPUT?
 
 		iptables -A INPUT -m set ! --match-set guardset src -j DROP
 		iptables -A OUTPUT -m set ! --match-set guardset src -j DROP
