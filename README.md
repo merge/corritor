@@ -34,8 +34,16 @@ The most simple config...
 
 #### example 1
 
-		# allow loopback ?
-		iptables -I INPUT 1 -i lo -j ACCEPT
+		iptables -F
+		iptables -P INPUT DROP
+		iptables -P OUTPUT DROP
+		iptables -P FORWARD DROP
+		iptables -A INPUT -i lo -j ACCEPT
+		iptables -A OUTPUT -o lo -j ACCEPT
+		iptables -A INPUT -m set  --match-set guardset src -j ACCEPT
+		iptables -A OUTPUT -m set  --match-set guardset src -j ACCEPT
+
+#### example 2
 
 		# redirect all non-guard connections to local server
 		iptables -t nat -A PREROUTING -p tcp -j DNAT --to-destination 127.0.0.1 -m set ! --match-set guardset src
