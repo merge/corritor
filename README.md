@@ -30,8 +30,8 @@ The most simple config...
 * loopback?
 * PREROUTE instead of INPUT?
 
-		iptables -A INPUT -m set ! --match-set guardset src -j DROP
-		iptables -A OUTPUT -m set ! --match-set guardset src -j DROP
+		iptables -A INPUT -m set ! --match-set torset src -j DROP
+		iptables -A OUTPUT -m set ! --match-set torset src -j DROP
 
 #### example 1
 
@@ -41,14 +41,14 @@ The most simple config...
 		iptables -P FORWARD DROP
 		iptables -A INPUT -i lo -j ACCEPT
 		iptables -A OUTPUT -o lo -j ACCEPT
-		iptables -A INPUT -m set  --match-set guardset src -j ACCEPT
-		iptables -A OUTPUT -m set  --match-set guardset src -j ACCEPT
+		iptables -A INPUT -m set  --match-set torset src,dst -j ACCEPT
+		iptables -A OUTPUT -m set  --match-set torset src,dst -j ACCEPT
 
 #### example 2
 
 		# redirect all non-guard connections to local server
-		iptables -t nat -A PREROUTING -p tcp -j DNAT --to-destination 127.0.0.1 -m set ! --match-set guardset src
-		iptables -t nat -A POSTROUTING -p tcp -j SNAT --to-source 127.0.0.1 -m set ! --match-set guardset src
+		iptables -t nat -A PREROUTING -p tcp -j DNAT --to-destination 127.0.0.1 -m set ! --match-set torset src
+		iptables -t nat -A POSTROUTING -p tcp -j SNAT --to-source 127.0.0.1 -m set ! --match-set torset src
 
 
 ### update
