@@ -11,50 +11,34 @@ that simply whitelists traffic to and from Guard relays only.
 
 ## DONE
 ### ipset
-
-		ipset create torset hash:ip,port
-
-* bootstrap: using `src/or/auth_dirs.inc`:
-  * `torset_add_auths.sh` runs `ipset add torset` on them.
-  * `download_consensus.sh` downloads the consensus file in a stupid way.
-* using scripts/maint/fallback.whitelist:
-  * `torset_add_fbdirs.sh` uses the fallback dirs and adds them to torset
-* using the consensus:
-  * `torset_add_guards.sh` uses the consensus file and runs `ipset add torset`
-on each Guard relay
-
-## TODO
-### iptables
-The most simple config...
-* Tor control port
-* loopback?
-* PREROUTE instead of INPUT?
-
-		iptables -A INPUT -m set ! --match-set torset src -j DROP
-		iptables -A OUTPUT -m set ! --match-set torset src -j DROP
-
-#### example 1
-
-		iptables -F
-		iptables -P INPUT DROP
-		iptables -P OUTPUT DROP
-		iptables -P FORWARD DROP
-		iptables -A INPUT -i lo -j ACCEPT
-		iptables -A OUTPUT -o lo -j ACCEPT
-		iptables -A INPUT -m set  --match-set torset src,dst -j ACCEPT
-		iptables -A OUTPUT -m set  --match-set torset src,dst -j ACCEPT
-
-#### example 2
-
-		# redirect all non-guard connections to local server
-		iptables -t nat -A PREROUTING -p tcp -j DNAT --to-destination 127.0.0.1 -m set ! --match-set torset src
-		iptables -t nat -A POSTROUTING -p tcp -j SNAT --to-source 127.0.0.1 -m set ! --match-set torset src
-
+`torset_create.sh` creates an ipset named torset, using a consensus file
+if present.
 
 ### update
-Procedure: https://wiki.gentoo.org/wiki/IPSet
+This should simply be
 
-Guards are quite stable, update every few hours?
+	cd <workdir>
+	rm consensus
+	./torset_create.sh
+
+which could be run hourly by cron:
+
+	15 * * * * <update_script.sh>
+
+## TODO
+### Hardware
+* What constraints do we have? Flashsize?
+* see openwrt's [table of hardware](https://openwrt.org/toh/views/toh_available_864)
+
+### iptables
+The most simple config... Tor control port, loopback? how will
+
+	vi /etc/firewall.user
+
+look like?
+
+	iptables -t nat -A PREROUTING -i wlan0 -m set ! --match-set torset src -j DROP
+
 
 ### OpenWRT network
 We want to apply iptables to the wifi and still be able to use opkg and
@@ -72,7 +56,3 @@ How to combine with the whitelist? see iptables.
 * gettor email
 * https://github.com/TheTorProject/gettorbrowser
 * NO, we should have an ip:port with tor browser, we can link to at our local html site!!
-
-### Hardware
-* What constraints do we have? Flashsize?
-* see openwrt's [table of hardware](https://openwrt.org/toh/views/toh_available_864)
