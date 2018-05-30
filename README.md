@@ -2,12 +2,24 @@
 
 #### Not affiliated with the Tor Project.
 
-The [corridor](https://github.com/rustybird/corridor) Projekt adresses
-important issues that "transparently torifying gateways" suffer from. It
-still runs the Tor software itself though.
+[corridor](https://github.com/rustybird/corridor), a different but similar
+project, adresses important issues that "transparently torifying gateways"
+suffer from.
+It still runs the Tor software itself though. Here, we don't.
 
-This should become an [OpenWRT](https://openwrt.org/) network configuration
-that simply whitelists traffic to and from Guard relays only.
+This should become an [OpenWRT](https://openwrt.org/) (wifi) network
+configuration that whitelists traffic to and from the Tor network.
+
+You _cannot_ use Tor Bridges in this network!
+They help you when Tor is being blocked. Here,
+Tor is allowed - only Tor.
+
+## Why?
+* advantages over transparent Tor routers
+  * users don't have to trust the router's Tor software. They run Tor themselves
+  * never have old and vulnerable Tor versions on the router
+  * simple and lightweight
+  * users are more likely to use TorBrowser
 
 ## DONE
 ### ipset
