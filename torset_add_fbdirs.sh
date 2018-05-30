@@ -47,11 +47,8 @@ if [ ! "$have_setname" -gt 0 ] ; then
 fi
 
 if [ ! -e ./external/fallback_dirs.inc ] ; then
-	mkdir -p external && cd external && curl -L -O https://gitweb.torproject.org/tor.git/plain/src/or/fallback_dirs.inc
+	mkdir -p external && cd external && curl --silent -L -O https://gitweb.torproject.org/tor.git/plain/src/or/fallback_dirs.inc
 	cd ..
 fi
 
 cat external/fallback_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\:[0-9]\{1,5\}' | tr ':' ',' | while read entry; do ipset add -exist ${SETNAME} $entry; done
-
-entries=$(ipset list ${SETNAME} | wc -l)
-echo "fallback dirs added to ${SETNAME}. now ${entries} entries."

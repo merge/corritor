@@ -2,13 +2,14 @@
 set -e
 
 have_setname=0
+verbose=0
 
 usage()
 {
-	echo "Usage: $0 -s <ipset_name>"
+	echo "Usage: $0 -s <ipset_name> [-v]"
 }
 
-args=$(getopt -o s:h -- "$@")
+args=$(getopt -o s:hv -- "$@")
 if [ $? -ne 0 ] ; then
 	usage
 	exit 1
@@ -22,6 +23,9 @@ do
 		SETNAME=$2
 		have_setname=1
 		shift
+		;;
+	-v)
+		verbose=1
 		;;
 	-h)
 		usage
@@ -52,11 +56,11 @@ if [ ! -e external/consensus ] ; then
 		exit 1
 	fi
 
-	cd external && cat auth_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | while read entry; do curl -L -O $entry/tor/status-vote/current/consensus && break ; done
+	if [ $verbose -gt 0 ] ; then
+		echo "downloading consensus file. please wait."
+	fi
+	cd external && cat auth_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | sort | while read entry; do curl --silent -L -O $entry/tor/status-vote/current/consensus && break ; done
 	cd ..
 fi
 
 cat external/consensus | grep -B 2 Guard | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\ [0-9]\{1,5\}' | tr ' ' ',' | while read entry; do ipset add -exist ${SETNAME} $entry; done
-
-entries=$(ipset list ${SETNAME} | wc -l)
-echo "guards added to ${SETNAME}. now ${entries} entries."

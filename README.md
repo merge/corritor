@@ -11,15 +11,14 @@ that simply whitelists traffic to and from Guard relays only.
 
 ## DONE
 ### ipset
-`torset_create.sh` creates an ipset named torset, using a consensus file
-if present.
+`torset.sh` creates or updates an ipset named torset.
 
 ### update
 This should simply be
 
 	cd <workdir>
 	rm consensus
-	./torset_create.sh
+	./torset.sh
 
 which could be run hourly by cron:
 
@@ -27,7 +26,7 @@ which could be run hourly by cron:
 
 ## TODO
 ### Hardware
-* What constraints do we have? Flashsize?
+* What constraints do we have? Flashsize? USB Stick?
 * see openwrt's [table of hardware](https://openwrt.org/toh/views/toh_available_864)
 
 ### iptables
