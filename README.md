@@ -14,15 +14,9 @@ that simply whitelists traffic to and from Guard relays only.
 `torset.sh` creates or updates an ipset named torset.
 
 ### update
-This should simply be
+This should simply be run hourly by cron:
 
-	cd <workdir>
-	rm consensus
-	./torset.sh
-
-which could be run hourly by cron:
-
-	15 * * * * <update_script.sh>
+	15 * * * * </path/to/torset.sh>
 
 ## TODO
 ### Hardware

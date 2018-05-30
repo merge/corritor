@@ -3,13 +3,18 @@ set -e
 
 setname=torset
 verbose=0
+workdir=external
+keep=0
 
 usage()
 {
-	echo "Usage: $0 [-s <ipset_name>] [-v]"
+	echo "Usage: $0 [-s <ipset_name>] [-v] [-d <workdir>] [-k]"
+	echo ""
+	echo "-v		verbose output"
+	echo "-k		keep the workdir"
 }
 
-args=$(getopt -o s:hv -- "$@")
+args=$(getopt -o s:d:khv -- "$@")
 if [ $? -ne 0 ] ; then
 	usage
 	exit 1
@@ -22,6 +27,13 @@ do
 	-s)
 		setname=$2
 		shift
+		;;
+	-d)
+		workdir=$2
+		shift
+		;;
+	-k)
+		keep=1
 		;;
 	-v)
 		verbose=1
@@ -42,25 +54,27 @@ do
 	shift
 done
 
+mkdir -p ${workdir}
+
 tmpsetname=${setname}-tmp
 ipset create ${tmpsetname} hash:ip,port
 
-./torset_add_auths.sh -s ${tmpsetname}
+./torset_add_auths.sh -s ${tmpsetname} -d ${workdir}
 if [ $verbose -gt 0 ] ; then
 	entries=$(ipset list ${tmpsetname} | wc -l)
 	echo "dir auths added to ${setname}. now ${entries} entries."
 fi
 
-./torset_add_fbdirs.sh -s ${tmpsetname}
+./torset_add_fbdirs.sh -s ${tmpsetname} -d ${workdir}
 if [ $verbose -gt 0 ] ; then
 	entries=$(ipset list ${tmpsetname} | wc -l)
 	echo "fallback dirs added to ${setname}. now ${entries} entries."
 fi
 
 if [ $verbose -gt 0 ] ; then
-	./torset_add_guards.sh -s ${tmpsetname} -v
+	./torset_add_guards.sh -s ${tmpsetname} -v -d ${workdir}
 else
-	./torset_add_guards.sh -s ${tmpsetname}
+	./torset_add_guards.sh -s ${tmpsetname} -d ${workdir}
 fi
 
 ipset create -exist ${setname} hash:ip,port
@@ -70,4 +84,8 @@ ipset destroy ${tmpsetname}
 if [ $verbose -gt 0 ] ; then
 	entries=$(ipset list ${setname} | wc -l)
 	echo "ipset ${setname} fully updated. ${entries} entries."
+fi
+
+if [ ! $keep -gt 0 ] ; then
+	rm -rf ${workdir}
 fi
