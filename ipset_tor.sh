@@ -5,12 +5,13 @@ setname=torset
 verbose=0
 workdir=external
 keep=0
+addfile=""
 
 usage()
 {
 	echo "			corritor"
 	echo "			--------"
-	echo "Usage: $0 [-s <ipset_name>] [-v] [-d <workdir>] [-k]"
+	echo "Usage: $0 [-s <ipset_name>] [-v] [-d <workdir>] [-k] [-a file]"
 	echo ""
 	echo "-h		display this help text and exit"
 	echo "-v		verbose output"
@@ -20,9 +21,10 @@ usage()
 	echo "			will be created if not existing"
 	echo "			default: external"
 	echo "-k		keep the downloads after finishing"
+	echo "-a		file with ip:port list to allow too"
 }
 
-args=$(getopt -o s:d:khv -- "$@")
+args=$(getopt -o s:d:khva: -- "$@")
 if [ $? -ne 0 ] ; then
 	usage
 	exit 1
@@ -32,6 +34,10 @@ eval set -- "$args"
 while [ $# -gt 0 ]
 do
 	case "$1" in
+	-a)
+		addfile=$2
+		shift
+		;;
 	-s)
 		setname=$2
 		shift
@@ -65,6 +71,10 @@ done
 mkdir -p ${workdir}
 
 tmpsetname=${setname}-tmp
+
+if [ ! -z $addfile ] ; then
+	cp ${addfile} ${workdir}/
+fi
 
 cd ${workdir}
 
@@ -103,6 +113,10 @@ fi
 cat consensus | grep -B 2 Guard | grep -B 2 Valid | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\ [0-9]\{1,5\}' | tr ' ' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
 cat consensus | grep -B 2 Authority | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\ [0-9]\{1,5\}' | tr ' ' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
 
+# custom additions
+if [ ! -z $addfile ] ; then
+	cat $addfile | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\:[0-9]\{1,5\}' | tr ':' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
+fi
 
 ipset create -exist ${setname} hash:ip,port
 ipset swap ${tmpsetname} ${setname}

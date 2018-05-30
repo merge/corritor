@@ -51,9 +51,5 @@ look like?
 * [Global bandwith limit](https://openwrt.org/docs/guide-user/network/traffic-shaping/qos-tomerge#quick_start_guide)
 
 ### Wifi Portal for downloading Tor Browser
-* Preferably manually redirect any "dropped" port 80/443 to a local page.
-Would something like this work, when running a [webserver](https://openwrt.org/docs/guide-user/services/webserver/http.uhttpd)?
-How to combine with the whitelist? see iptables.
-* we should have two servers (ip:port) hosting Tor browser, similar to
-[this](https://thetorproject.github.io/gettor/),
-we can link to at a local html site or simply write somewhere down.
+* we have IP addresses that mirror torproject.org in mirrors.txt
+* redirection of port 80, before dropping, would be nice
