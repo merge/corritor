@@ -65,7 +65,6 @@ done
 mkdir -p ${workdir}
 
 tmpsetname=${setname}-tmp
-ipset create ${tmpsetname} hash:ip,port
 
 cd ${workdir}
 
@@ -73,6 +72,8 @@ cd ${workdir}
 if [ ! -e auth_dirs.inc ] ; then
 	curl --silent -L -O https://gitweb.torproject.org/tor.git/plain/src/or/auth_dirs.inc
 fi
+
+ipset create -exist ${tmpsetname} hash:ip,port
 
 cat auth_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\:[0-9]\{1,5\}' | tr ':' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
 if [ $verbose -gt 0 ] ; then
