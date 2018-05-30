@@ -92,7 +92,7 @@ if [ $verbose -gt 0 ] ; then
 	echo "fallback dirs added to ${setname}. now ${entries} entries."
 fi
 
-# guards (from dir auth)
+# valid guards (from dir auth)
 if [ ! -e consensus ] ; then
 	if [ $verbose -gt 0 ] ; then
 		echo "downloading consensus file. please wait."
@@ -100,7 +100,8 @@ if [ ! -e consensus ] ; then
 	cat auth_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | sort | while read entry; do curl --silent -L -O $entry/tor/status-vote/current/consensus && break ; done
 fi
 
-cat consensus | grep -B 2 Guard | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\ [0-9]\{1,5\}' | tr ' ' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
+cat consensus | grep -B 2 Guard | grep -B 2 Valid | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\ [0-9]\{1,5\}' | tr ' ' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
+cat consensus | grep -B 2 Authority | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\ [0-9]\{1,5\}' | tr ' ' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
 
 
 ipset create -exist ${setname} hash:ip,port
