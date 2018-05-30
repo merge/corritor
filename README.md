@@ -46,18 +46,14 @@ look like?
 
 
 ### OpenWRT network
-We want to apply iptables to the wifi and still be able to use opkg and
-whatnot when connected to LAN. Default to an open wifi with a predefined
-name (free4Tor ?) is fine.
-
-Global bandwith limit for the wifi!
+* only on the wlan interface. Full internet on the lan interfaces
+* pre-defined wifi name "free4Tor" is fine
+* [Global bandwith limit](https://openwrt.org/docs/guide-user/network/traffic-shaping/qos-tomerge#quick_start_guide)
 
 ### Wifi Portal for downloading Tor Browser
-* Preferably, manually redirect any "dropped" port 80/443 to a local page.
+* Preferably manually redirect any "dropped" port 80/443 to a local page.
 Would something like this work, when running a [webserver](https://openwrt.org/docs/guide-user/services/webserver/http.uhttpd)?
 How to combine with the whitelist? see iptables.
-
-* whitelist torproject.org ? no. avoid allowing DNS.
-* gettor email
-* https://github.com/TheTorProject/gettorbrowser
-* NO, we should have an ip:port with tor browser, we can link to at our local html site!!
+* we should have two servers (ip:port) hosting Tor browser, similar to
+[this](https://thetorproject.github.io/gettor/),
+we can link to at a local html site or simply write somewhere down.
