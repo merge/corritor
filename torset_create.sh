@@ -3,10 +3,6 @@ set -e
 
 setname=torset
 
-if [ ! -e ./consensus ] ; then
-	./download_consensus.sh
-fi
-
 tmpsetname=${setname}-tmp
 ipset create ${tmpsetname} hash:ip,port
 ./torset_add_auths.sh -s ${tmpsetname}

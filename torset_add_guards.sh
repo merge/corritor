@@ -46,9 +46,17 @@ if [ ! "$have_setname" -gt 0 ] ; then
 	exit 1
 fi
 
-if [ ! -e ./consensus ] ; then
-	echo "source file missing. please execute from the source directory."
-	exit 1
+if [ ! -e external/consensus ] ; then
+	if [ ! -e external/auth_dirs.inc ] ; then
+		echo "Directory authorities file missing"
+		exit 1
+	fi
+
+	cd external && cat auth_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | while read entry; do curl -L -O $entry/tor/status-vote/current/consensus && break ; done
+	cd ..
 fi
 
-cat consensus | grep -B 2 Guard | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\ [0-9]\{1,5\}' | tr ' ' ',' | while read entry; do ipset add -exist ${SETNAME} $entry; done
+cat external/consensus | grep -B 2 Guard | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\ [0-9]\{1,5\}' | tr ' ' ',' | while read entry; do ipset add -exist ${SETNAME} $entry; done
+
+entries=$(ipset list ${SETNAME} | wc -l)
+echo "guards added to ${SETNAME}. now ${entries} entries."

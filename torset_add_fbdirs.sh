@@ -46,9 +46,12 @@ if [ ! "$have_setname" -gt 0 ] ; then
 	exit 1
 fi
 
-if [ ! -e ./external/fallback.whitelist ] ; then
-	echo "source file missing. please execute from the source directory."
-	exit 1
+if [ ! -e ./external/fallback_dirs.inc ] ; then
+	mkdir -p external && cd external && curl -L -O https://gitweb.torproject.org/tor.git/plain/src/or/fallback_dirs.inc
+	cd ..
 fi
 
-cat external/fallback.whitelist | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\:[0-9]\{1,5\}' | tr ':' ',' | sort -u | while read entry; do ipset add -exist ${SETNAME} $entry; done
+cat external/fallback_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\:[0-9]\{1,5\}' | tr ':' ',' | while read entry; do ipset add -exist ${SETNAME} $entry; done
+
+entries=$(ipset list ${SETNAME} | wc -l)
+echo "fallback dirs added to ${SETNAME}. now ${entries} entries."
