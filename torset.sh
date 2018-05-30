@@ -8,10 +8,18 @@ keep=0
 
 usage()
 {
+	echo "			corritor"
+	echo "			--------"
 	echo "Usage: $0 [-s <ipset_name>] [-v] [-d <workdir>] [-k]"
 	echo ""
+	echo "-h		display this help text and exit"
 	echo "-v		verbose output"
-	echo "-k		keep the workdir"
+	echo "-s		name of the ipset to be created or updated"
+	echo "			default: torset"
+	echo "-d		directory for downloading files."
+	echo "			will be created if not existing"
+	echo "			default: external"
+	echo "-k		keep the downloads after finishing"
 }
 
 args=$(getopt -o s:d:khv -- "$@")
@@ -59,23 +67,40 @@ mkdir -p ${workdir}
 tmpsetname=${setname}-tmp
 ipset create ${tmpsetname} hash:ip,port
 
-./torset_add_auths.sh -s ${tmpsetname} -d ${workdir}
+cd ${workdir}
+
+# dir auths
+if [ ! -e auth_dirs.inc ] ; then
+	curl --silent -L -O https://gitweb.torproject.org/tor.git/plain/src/or/auth_dirs.inc
+fi
+
+cat auth_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\:[0-9]\{1,5\}' | tr ':' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
 if [ $verbose -gt 0 ] ; then
 	entries=$(ipset list ${tmpsetname} | wc -l)
 	echo "dir auths added to ${setname}. now ${entries} entries."
 fi
 
-./torset_add_fbdirs.sh -s ${tmpsetname} -d ${workdir}
+# fallback dirs
+if [ ! -e fallback_dirs.inc ] ; then
+	curl --silent -L -O https://gitweb.torproject.org/tor.git/plain/src/or/fallback_dirs.inc
+fi
+
+cat fallback_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\:[0-9]\{1,5\}' | tr ':' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
 if [ $verbose -gt 0 ] ; then
 	entries=$(ipset list ${tmpsetname} | wc -l)
 	echo "fallback dirs added to ${setname}. now ${entries} entries."
 fi
 
-if [ $verbose -gt 0 ] ; then
-	./torset_add_guards.sh -s ${tmpsetname} -v -d ${workdir}
-else
-	./torset_add_guards.sh -s ${tmpsetname} -d ${workdir}
+# guards (from dir auth)
+if [ ! -e consensus ] ; then
+	if [ $verbose -gt 0 ] ; then
+		echo "downloading consensus file. please wait."
+	fi
+	cat auth_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | sort | while read entry; do curl --silent -L -O $entry/tor/status-vote/current/consensus && break ; done
 fi
+
+cat consensus | grep -B 2 Guard | grep -o '[0-9]\{2,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\ [0-9]\{1,5\}' | tr ' ' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
+
 
 ipset create -exist ${setname} hash:ip,port
 ipset swap ${tmpsetname} ${setname}
@@ -87,5 +112,6 @@ if [ $verbose -gt 0 ] ; then
 fi
 
 if [ ! $keep -gt 0 ] ; then
+	cd -
 	rm -rf ${workdir}
 fi
