@@ -23,12 +23,12 @@ Tor is allowed - only Tor.
 
 ## DONE
 ### ipset
-`torset.sh` creates or updates an ipset named torset.
+`ipset_tor.sh` creates or updates an ipset named torset.
 
 ### update
 This should simply be run hourly by cron:
 
-	15 * * * * </path/to/torset.sh>
+	15 * * * * </path/to/ipset_tor.sh>
 
 ## TODO
 ### Hardware
