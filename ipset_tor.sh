@@ -1,4 +1,7 @@
 #!/bin/sh
+# SPDX-License-Identifier: GPL-3.0+
+# Copyright 2018, Martin Kepplinger <martink@posteo.de>
+
 set -e
 
 setname=torset
@@ -11,6 +14,9 @@ usage()
 {
 	echo "			corritor"
 	echo "			--------"
+	echo "This script creates or updates an ipset with all TCP IP:Port"
+	echo "combinations needed to connect to the Tor network."
+	echo ""
 	echo "Usage: $0 [-s <ipset_name>] [-v] [-d <workdir>] [-k] [-a file]"
 	echo ""
 	echo "-h		display this help text and exit"
