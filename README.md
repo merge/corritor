@@ -1,29 +1,32 @@
-# corritor, a Tor traffic whitelisting OpenWRT network
+# corritor, a [Tor](https://www.torproject.org/) traffic whitelisting OpenWRT network
+"Force users to use [Tor Browser](https://www.torproject.org/download/download-easy.html.en)".
 
 #### Not affiliated with the Tor Project.
 
 [corridor](https://github.com/rustybird/corridor), a different but similar
-project, adresses important issues that "transparently torifying gateways"
-suffer from.
-It still runs the Tor software itself though. Here, we don't.
+project, adresses important
+[issues](https://trac.torproject.org/projects/tor/wiki/doc/TransparentProxyLeaks)
+that "transparently torifying proxies" suffer from.
+It still runs the Tor software itself though. corritor does not. It simply looks
+at the Tor network from the outside.
 
-This should become an [OpenWRT](https://openwrt.org/) (wifi) network
+This is an [OpenWRT](https://openwrt.org/) (wifi) network
 configuration that whitelists traffic to and from the Tor network.
 
-You _cannot_ use Tor Bridges in this network!
-They help you when Tor is being blocked. Here,
+Users _cannot_ use Tor Bridges in this network!
+Bridges help when Tor is being blocked. Here,
 Tor is allowed - only Tor.
 
 ## Why?
-* advantages over transparent Tor routers
+* advantages over transparent Tor proxies
   * users don't have to trust the router's Tor software. They run Tor themselves
   * never have old and vulnerable Tor versions on the router
   * simple and lightweight
-  * users are more likely to use TorBrowser
+  * users are more likely to use [TorBrowser](https://www.torproject.org/download/download-easy.html.en)
 
 ## DONE
 ### ipset
-`ipset_tor.sh` creates or updates an ipset named torset.
+`ipset_tor.sh` creates or updates an ipset (named torset by default).
 
 ### update
 This should simply be run hourly by cron:
