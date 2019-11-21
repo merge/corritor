@@ -86,7 +86,7 @@ cd ${workdir}
 
 # dir auths
 if [ ! -e auth_dirs.inc ] ; then
-	curl --silent -L -O https://gitweb.torproject.org/tor.git/plain/src/or/auth_dirs.inc
+	curl --silent -L -O https://gitweb.torproject.org/tor.git/plain/src/app/config/auth_dirs.inc
 fi
 
 ipset create -exist ${tmpsetname} hash:ip,port
@@ -99,7 +99,7 @@ fi
 
 # fallback dirs
 if [ ! -e fallback_dirs.inc ] ; then
-	curl --silent -L -O https://gitweb.torproject.org/tor.git/plain/src/or/fallback_dirs.inc
+	curl --silent -L -O https://gitweb.torproject.org/tor.git/plain/src/app/config/fallback_dirs.inc
 fi
 
 cat fallback_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\:[0-9]\{1,5\}' | tr ':' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
