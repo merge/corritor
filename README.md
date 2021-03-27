@@ -1,8 +1,6 @@
 # corritor, a [Tor](https://www.torproject.org/) traffic whitelisting OpenWRT network
 "Force users to use [Tor Browser](https://www.torproject.org/download/download-easy.html.en)".
 
-This is merely an idea by now.
-
 #### Not affiliated with the Tor Project.
 
 So called "transparent proxies" suffer from significant
@@ -35,9 +33,9 @@ This should simply be run weekly by cron:
 
 	15 * * * * </path/to/ipset_tor.sh>
 
-## TODO
 ### Hardware
-* What constraints do we have? Flashsize? USB Stick?
+* Reference hardware for prototyping: [Netgear Nighthawk X4S](https://openwrt.org/toh/netgear/r7800)
+* What constraints do we really have? Flashsize? USB Stick?
 * see openwrt's [table of hardware](https://openwrt.org/toh/views/toh_available_864)
 
 ### iptables
