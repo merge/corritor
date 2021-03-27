@@ -5,14 +5,14 @@ This is merely an idea by now.
 
 #### Not affiliated with the Tor Project.
 
-[corridor](https://github.com/rustybird/corridor), a different but similar
-project, adresses important
+So called "transparent proxies" suffer from significant
 [issues](https://trac.torproject.org/projects/tor/wiki/doc/TransparentProxyLeaks)
-that "transparently torifying proxies" suffer from.
-It still runs the Tor software itself though. corritor does not. It simply looks
-at the Tor network from the outside.
+that we want to address. Also, corritor does not run the Tor software.
+It looks at the Tor network from the outside.
+This is important because there is no need to upgrade the Router firmware
+in order to update Tor.
 
-This can become an [OpenWRT](https://openwrt.org/) (wifi) network
+This should become an [OpenWRT](https://openwrt.org/) (wifi) network
 configuration that whitelists traffic to and from the Tor network.
 
 Users _cannot_ use Tor Bridges in this network!
