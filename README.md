@@ -26,6 +26,8 @@ Tor is allowed - only Tor.
     which is more secure than tunnel a normal Browsers' traffic through Tor
 
 ## how to use
+Make sure `ipset` and `curl` are avilable on the system.
+
 `ipset_tor.sh` creates or updates an ipset (named torset by default). This
 should be run regularly by cron:
 
