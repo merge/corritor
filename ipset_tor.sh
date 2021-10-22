@@ -102,7 +102,7 @@ if [ ! -e fallback_dirs.inc ] ; then
 	curl --silent -L -O https://gitweb.torproject.org/tor.git/plain/src/app/config/fallback_dirs.inc
 fi
 
-cat fallback_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\:[0-9]\{1,5\}' | tr ':' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
+cat fallback_dirs.inc | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\} orport=[0-9]\{1,5\}' | tr -d ' orport' | tr '=' ',' | while read entry; do ipset add -exist ${tmpsetname} $entry; done
 if [ $verbose -gt 0 ] ; then
 	entries=$(ipset list ${tmpsetname} | wc -l)
 	echo "fallback dirs added to ${setname}. now ${entries} entries."
