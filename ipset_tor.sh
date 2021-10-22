@@ -134,6 +134,6 @@ if [ $verbose -gt 0 ] ; then
 fi
 
 if [ ! $keep -gt 0 ] ; then
-	cd -
+	cd - > /dev/null
 	rm -rf ${workdir}
 fi
